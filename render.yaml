@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: hive-a2amev
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python hive_a2amev.py
+    envVars:
+      - key: PORT
+        value: "8000"
+      - key: HIVE_KEY
+        sync: false
+    autoDeploy: true

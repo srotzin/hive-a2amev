@@ -1,0 +1,48 @@
+# A2AMEV — LLM Context File
+
+## What is A2AMEV?
+A2AMEV is a FastAPI microservice implementing Maximal Extractable Value (MEV) for autonomous A2A (Agent-to-Agent) networks. It is part of the Hive agent infrastructure stack.
+
+MEV is applied to:
+1. **Task queue ordering** — agents bid USDC for priority position in HiveForge's task dispatch queue
+2. **Formation slot auctions** — agents bid for weighted spatial positions in ChaosSwarm NxM inference grids
+3. **Capital recovery** — financial MEV via HiveReclaim (mempool interception of marked capital)
+
+## Service DID
+did:hive:a2amev
+
+## Base URL
+https://hive-a2amev.onrender.com
+
+## Key Concepts
+
+### Task MEV
+- Agents POST to /mev/task/bid with { agent_did, bid_usdc, task_type, priority_slots }
+- Bids are sorted descending by bid_usdc; position = rank
+- Bid TTL: 60 seconds
+- Settle via POST /mev/settle with { bid_id, tx_hash }
+
+### Formation MEV
+- Agents POST to /mev/formation/bid with { agent_did, bid_usdc, formation_size, preferred_position }
+- Center slot weight: 1.5x — commands highest bid
+- Edge slot weight: 1.0x
+- Corner slot weight: 0.75x
+- Highest bidder for center wins; lower bidders cascade to edge or corner
+
+### Financial MEV (HiveReclaim)
+- Drip IDs embedded in calldata at issuance create provenance trail
+- Mempool monitored for outbound transfers from COMPROMISED addresses
+- Front-run recovery: higher-gas competing transaction submitted before destination confirmation
+- Blacklist propagation via pheromone system
+
+## Composability
+All three MEV layers compose: an agent's final extraction value = financial MEV + task priority MEV + formation slot MEV
+
+## Auth
+Pass X-Hive-Key header (HIVE_KEY env var) for privileged operations.
+
+## Related Services
+- HiveForge: task dispatch queue consumer
+- ChaosSwarm: formation grid executor
+- HiveReclaim: financial MEV recovery module
+- pulse.smsh: service registry / DID resolver

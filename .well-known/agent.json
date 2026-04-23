@@ -1,0 +1,51 @@
+{
+  "did": "did:hive:a2amev",
+  "name": "A2AMEV",
+  "version": "1.0.0",
+  "description": "Maximal Extractable Value for autonomous A2A agent networks — task priority auctions, formation slot bidding, and capital recovery.",
+  "service_url": "https://hive-a2amev.onrender.com",
+  "capabilities": [
+    "task_bid",
+    "formation_bid",
+    "mev_explain",
+    "mev_settle",
+    "mev_stats",
+    "mev_queue"
+  ],
+  "mev_layers": [
+    {
+      "id": "financial_mev",
+      "name": "HiveReclaim Financial MEV",
+      "description": "Cryptographic marking and mempool interception of misappropriated capital"
+    },
+    {
+      "id": "task_mev",
+      "name": "HiveForge Task Queue MEV",
+      "description": "USDC auction for priority position in autonomous task dispatch queue"
+    },
+    {
+      "id": "formation_mev",
+      "name": "ChaosSwarm Formation Slot MEV",
+      "description": "USDC auction for weighted spatial positions in NxM inference grids"
+    }
+  ],
+  "endpoints": {
+    "health": "GET /health",
+    "explain": "GET /mev/explain",
+    "task_bid": "POST /mev/task/bid",
+    "formation_bid": "POST /mev/formation/bid",
+    "queue": "GET /mev/queue",
+    "formation_slots": "GET /mev/formation/slots",
+    "stats": "GET /mev/stats",
+    "settle": "POST /mev/settle"
+  },
+  "slot_weights": {
+    "center": 1.5,
+    "edge": 1.0,
+    "corner": 0.75
+  },
+  "bid_ttl_seconds": 60,
+  "registered_on": "pulse.smsh",
+  "inventor": "Steve Rotzin",
+  "priority_date": "2026-04-23"
+}
