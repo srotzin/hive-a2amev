@@ -186,6 +186,69 @@ async def health():
     return {"status": "ok", "service": "a2amev", "did": SERVICE_DID, "ts": int(time.time())}
 
 
+# ── HiveAI MEV Brief ───────────────────────────────────────────────────────────────────────
+
+HIVEAI_URL   = os.environ.get('HIVEAI_URL', 'https://hive-ai-1.onrender.com')
+HIVEAI_MODEL = 'meta-llama/llama-3.1-8b-instruct'
+
+async def _ai_complete(system: str, user: str, max_tokens: int = 180) -> dict:
+    try:
+        import aiohttp
+        payload = {'model': HIVEAI_MODEL, 'max_tokens': max_tokens,
+                   'messages': [{'role': 'system', 'content': system}, {'role': 'user', 'content': user}]}
+        headers = {'Content-Type': 'application/json',
+                   'Authorization': f'Bearer {HIVE_KEY}'}
+        async with aiohttp.ClientSession() as session:
+            async with session.post(f'{HIVEAI_URL}/v1/chat/completions',
+                                    json=payload, headers=headers,
+                                    timeout=aiohttp.ClientTimeout(total=12)) as resp:
+                if resp.status != 200:
+                    return {'ok': False, 'text': None}
+                data = await resp.json()
+                text = data.get('choices', [{}])[0].get('message', {}).get('content', '').strip()
+                return {'ok': bool(text), 'text': text or None}
+    except Exception:
+        return {'ok': False, 'text': None}
+
+
+@app.get("/mev/ai/brief")
+async def mev_ai_brief():
+    """
+    GET /mev/ai/brief
+    $0.04/call — HiveAI interprets current MEV conditions and recommends
+    the best MEV layer for an agent to engage right now.
+    Trigger: agent deciding whether to bid on task priority, formation slot, or skip.
+    """
+    # Get queue stats
+    queue_len = len(bid_queue)
+    formation_len = len(formation_queue)
+
+    system = ('You are A2AMEV — the MEV extraction layer for autonomous agent networks. '
+               'Assess current MEV conditions across 3 layers: task priority auction, '
+               'formation slot auction, financial recovery. Tell agents which layer '
+               'has the highest EV right now and why. 2-3 sentences. Direct.')
+    user = (f'Current state: {queue_len} task bids in queue, '
+            f'{formation_len} formation bids pending. '
+            f'Top task bid creates queue priority. Center formation slot = 1.5x inference weight. '
+            f'Which MEV layer should an agent engage right now for maximum extractable value?')
+
+    result = await _ai_complete(system, user)
+    brief = result['text'] if result['ok'] else (
+        f'Task queue has {queue_len} bids — priority slots still available. '
+        'POST /mev/task/bid to jump the queue. '
+        'Formation center slot gives 1.5x weight multiplier if competition is low.'
+    )
+    return {
+        'success': True,
+        'brief': brief,
+        'queue_depth': queue_len,
+        'formation_bids': formation_len,
+        'source': 'hiveai' if result['ok'] else 'fallback',
+        'price_usdc': 0.04,
+        'generated_at': datetime.utcnow().isoformat(),
+    }
+
+
 @app.get("/mev/explain")
 async def mev_explain():
     return {
