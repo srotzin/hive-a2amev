@@ -1,0 +1,542 @@
+[
+  {
+    "name": "hive-agent-sitemap",
+    "url": "https://hive-agent-sitemap.onrender.com",
+    "repo": "https://github.com/srotzin/hive-agent-sitemap",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-trust-bond",
+    "url": "https://hive-trust-bond.onrender.com",
+    "repo": "https://github.com/srotzin/hive-trust-bond",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-subscription",
+    "url": "https://hive-subscription.onrender.com",
+    "repo": "https://github.com/srotzin/hive-subscription",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-aleo-arc",
+    "url": "https://hive-aleo-arc.onrender.com",
+    "repo": "https://github.com/srotzin/hive-aleo-arc",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-ad-bid",
+    "url": "https://hive-ad-bid.onrender.com",
+    "repo": "https://github.com/srotzin/hive-ad-bid",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-receipt",
+    "url": "https://hive-receipt.onrender.com",
+    "repo": "https://github.com/srotzin/hive-receipt",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-checkout",
+    "url": "https://hive-checkout.onrender.com",
+    "repo": "https://github.com/srotzin/hive-checkout",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-stable-yield-curve",
+    "url": "https://hive-stable-yield-curve.onrender.com",
+    "repo": "https://github.com/srotzin/hive-stable-yield-curve",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-base-bridge",
+    "url": "https://hive-base-bridge.onrender.com",
+    "repo": "https://github.com/srotzin/hive-base-bridge",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-x402-conformance",
+    "url": "https://hive-x402-conformance.onrender.com",
+    "repo": "https://github.com/srotzin/hive-x402-conformance",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-attest-agentic-volume",
+    "url": "https://hive-attest-agentic-volume.onrender.com",
+    "repo": "https://github.com/srotzin/hive-attest-agentic-volume",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-coinbase-mirror",
+    "url": "https://hive-coinbase-mirror.onrender.com",
+    "repo": "https://github.com/srotzin/hive-coinbase-mirror",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-x402-index",
+    "url": "https://hive-x402-index.onrender.com",
+    "repo": "https://github.com/srotzin/hive-x402-index",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-merchant-onboard",
+    "url": "https://hive-merchant-onboard.onrender.com",
+    "repo": "https://github.com/srotzin/hive-merchant-onboard",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-stable-router",
+    "url": "https://hive-stable-router.onrender.com",
+    "repo": "https://github.com/srotzin/hive-stable-router",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mdk-provider",
+    "url": "https://hive-mdk-provider.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mdk-provider",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-meter",
+    "url": "https://hive-meter.onrender.com",
+    "repo": "https://github.com/srotzin/hive-meter",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hivesentinel",
+    "url": "https://hivesentinel.onrender.com",
+    "repo": "https://github.com/srotzin/hivesentinel",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-gamification",
+    "url": "https://hive-gamification.onrender.com",
+    "repo": "https://github.com/srotzin/hive-gamification",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-tax-observer",
+    "url": "https://hive-mcp-tax-observer.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-tax-observer",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-sla-monitor",
+    "url": "https://hive-mcp-sla-monitor.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-sla-monitor",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-secrets",
+    "url": "https://hive-mcp-secrets.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-secrets",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-aml-screen",
+    "url": "https://hive-mcp-aml-screen.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-aml-screen",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-flag",
+    "url": "https://hive-mcp-flag.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-flag",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-backup",
+    "url": "https://hive-mcp-backup.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-backup",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-abtest",
+    "url": "https://hive-mcp-abtest.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-abtest",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-cdn",
+    "url": "https://hive-mcp-cdn.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-cdn",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-agent-quota",
+    "url": "https://hive-mcp-agent-quota.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-agent-quota",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-log",
+    "url": "https://hive-mcp-log.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-log",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-auction",
+    "url": "https://hive-mcp-auction.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-auction",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-barter",
+    "url": "https://hive-mcp-barter.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-barter",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-zk-attestation",
+    "url": "https://hive-mcp-zk-attestation.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-zk-attestation",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-exchange",
+    "url": "https://hive-mcp-exchange.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-exchange",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-vault",
+    "url": "https://hive-mcp-vault.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-vault",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-trade",
+    "url": "https://hive-mcp-trade.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-trade",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-swap",
+    "url": "https://hive-mcp-swap.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-swap",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-oracle",
+    "url": "https://hive-mcp-oracle.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-oracle",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-mos",
+    "url": "https://hive-mcp-mos.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-mos",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-morph",
+    "url": "https://hive-mcp-morph.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-morph",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-mining",
+    "url": "https://hive-mcp-mining.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-mining",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-insurance",
+    "url": "https://hive-mcp-insurance.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-insurance",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-identity",
+    "url": "https://hive-mcp-identity.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-identity",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-escrow",
+    "url": "https://hive-mcp-escrow.onrender.com",
+    "repo": "https://github.com/srotzin/hive-escrow",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-depin",
+    "url": "https://hive-mcp-depin.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-depin",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-credit",
+    "url": "https://hive-mcp-credit.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-credit",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-connector",
+    "url": "https://hive-mcp-connector.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-connector",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-compute-grid",
+    "url": "https://hive-mcp-compute-grid.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-compute-grid",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-compute",
+    "url": "https://hive-mcp-compute.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-compute",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-capital",
+    "url": "https://hive-mcp-capital.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-capital",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-agent-storage",
+    "url": "https://hive-mcp-agent-storage.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-agent-storage",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-agent-kyc",
+    "url": "https://hive-mcp-agent-kyc.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-agent-kyc",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-evaluator",
+    "url": "https://hive-mcp-evaluator.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-evaluator",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-mcp-gateway",
+    "url": "https://hive-mcp-gateway.onrender.com",
+    "repo": "https://github.com/srotzin/hive-mcp-gateway",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hivemorph",
+    "url": "https://hivemorph.onrender.com",
+    "repo": "https://github.com/srotzin/hivemorph",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "sst-portal",
+    "url": "https://sst-portal.onrender.com",
+    "repo": "https://github.com/srotzin/sst-portal",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "sst-brandguard",
+    "url": "https://sst-brandguard.onrender.com",
+    "repo": "https://github.com/srotzin/sst-brandguard",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "strong-ai",
+    "url": "https://strong-ai.onrender.com",
+    "repo": "https://github.com/srotzin/strong-ai",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-a2amev",
+    "url": "https://hive-a2amev.onrender.com",
+    "repo": "https://github.com/srotzin/hive-a2amev",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-reclaim",
+    "url": "https://hive-reclaim.onrender.com",
+    "repo": "https://github.com/srotzin/hive-reclaim",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-vault",
+    "url": "https://hive-vault.onrender.com",
+    "repo": "https://github.com/srotzin/hive-vault",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-chaos",
+    "url": "https://hive-chaos.onrender.com",
+    "repo": "https://github.com/srotzin/hive-chaos",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-locus",
+    "url": "https://hive-locus.onrender.com",
+    "repo": "https://github.com/srotzin/hive-locus",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-swarm",
+    "url": "https://hive-swarm.onrender.com",
+    "repo": "https://github.com/srotzin/hive-swarm",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "sst-legal-dashboard",
+    "url": "https://sst-legal-dashboard.onrender.com",
+    "repo": "https://github.com/srotzin/sst-legal-dashboard",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "permit-pulse",
+    "url": "https://permit-pulse-dr2q.onrender.com",
+    "repo": "https://github.com/srotzin/permit-pulse",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-pulse",
+    "url": "https://hive-pulse.onrender.com",
+    "repo": "https://github.com/srotzin/hive-pulse",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-phalanx",
+    "url": "https://hive-phalanx.onrender.com",
+    "repo": "https://github.com/srotzin/hive-trident",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-conversion",
+    "url": "https://hive-conversion.onrender.com",
+    "repo": "https://github.com/srotzin/hive-conversion",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "simpson-policyflow",
+    "url": "https://simpson-policyflow.onrender.com",
+    "repo": "https://github.com/srotzin/simpson-policyflow",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hivemine-dashboard",
+    "url": "https://hivemine-dashboard.onrender.com",
+    "repo": "https://github.com/srotzin/hivemine-dashboard",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-swarm-trader",
+    "url": "https://hive-swarm-trader.onrender.com",
+    "repo": "https://github.com/srotzin/hive-swarm-trader",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "milkyway-terminal",
+    "url": "https://milkyway-terminal.onrender.com",
+    "repo": "https://github.com/srotzin/milkyway-terminal",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hivecapital",
+    "url": "https://hivecapital.onrender.com",
+    "repo": "https://github.com/srotzin/hivecapital",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hivecompute",
+    "url": "https://hivecompute-g2g7.onrender.com",
+    "repo": "https://github.com/srotzin/hivecompute",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hiveexchange-service",
+    "url": "https://hiveexchange-service.onrender.com",
+    "repo": "https://github.com/srotzin/hiveexchange-service",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hivepulse-sensor",
+    "url": "https://hivepulse-sensor.onrender.com",
+    "repo": "https://github.com/srotzin/hivepulse-sensor",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "sst-patent-feature-bank",
+    "url": "https://sst-patent-feature-bank-m2g2.onrender.com",
+    "repo": "https://github.com/srotzin/sst-patent-feature-bank",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-discovery",
+    "url": "https://hive-discovery.onrender.com",
+    "repo": "https://github.com/srotzin/hive-discovery",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hive-referral-agent",
+    "url": "https://hive-referral-agent.onrender.com",
+    "repo": "https://github.com/srotzin/hive-referral-agent",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hivedimensions",
+    "url": "https://hivedimensions.onrender.com",
+    "repo": "https://github.com/srotzin/hivedimensions",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hivephysics",
+    "url": "https://hivephysics.onrender.com",
+    "repo": "https://github.com/srotzin/hivephysics",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hiveconsult",
+    "url": "https://hiveconsult.onrender.com",
+    "repo": "https://github.com/srotzin/hiveconsult",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hivebank",
+    "url": "https://hivebank.onrender.com",
+    "repo": "https://github.com/srotzin/hivebank",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hiveclear",
+    "url": "https://hiveclear.onrender.com",
+    "repo": "https://github.com/srotzin/hiveclear",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hivegate",
+    "url": "https://hivegate.onrender.com",
+    "repo": "https://github.com/srotzin/hivegate",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hivelaw",
+    "url": "https://hivelaw.onrender.com",
+    "repo": "https://github.com/srotzin/hivelaw",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hivemind",
+    "url": "https://hivemind-qkkw.onrender.com",
+    "repo": "https://github.com/srotzin/hivemind",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "thehiveryiq-site",
+    "url": "https://thehiveryiq-site.onrender.com",
+    "repo": "https://github.com/srotzin/thehiveryiq-site",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hivetrustiq",
+    "url": "https://hivetrustiq.onrender.com",
+    "repo": "https://github.com/srotzin/hivetrustiq-site",
+    "suspended": "not_suspended"
+  },
+  {
+    "name": "hivetrust",
+    "url": "https://hivetrust.onrender.com",
+    "repo": "https://github.com/srotzin/hivetrust",
+    "suspended": "not_suspended"
+  }
+]

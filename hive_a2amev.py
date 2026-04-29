@@ -200,8 +200,10 @@ def _check_rate_limit(ip: str) -> bool:
 
 def _load_fleet_snapshot() -> List[Dict[str, Any]]:
     """Load fleet snapshot from disk for cold-start seeding."""
-    # Try workspace path first, then local
+    # Try local repo file first, then workspace path
     candidates = [
+        os.path.join(os.path.dirname(__file__), "fleet_snapshot.json"),
+        "fleet_snapshot.json",
         "/home/user/workspace/launch_artifacts/fleet_snapshot_20260429.json",
         "fleet_snapshot_20260429.json",
     ]
