@@ -451,6 +451,33 @@ async def mev_settle(req: SettleRequest):
 
 
 # ---------------------------------------------------------------------------
+# A2A Discovery
+# ---------------------------------------------------------------------------
+
+@app.get("/.well-known/agent.json")
+async def hive_agent_json():
+    return {
+        "schema_version": "1.0",
+        "name": "hive-a2amev",
+        "did": "did:web:hive-a2amev.onrender.com",
+        "description": "Hive Civilization A2A surface",
+        "endpoints": {"base": "https://hive-a2amev.onrender.com"},
+        "payment": {
+            "x402": True,
+            "treasury": {
+                "evm": "0x15184bf50b3d3f52b60434f8942b7d52f2eb436e",
+                "evm_chains": [8453, 1, 137],
+                "solana": "B1N61cuL35fhskWz5dw8XqDyP6LWi3ZWmq8CNA9L3FVn",
+                "currencies": ["USDC", "USDT"],
+            },
+        },
+        "loyalty": {"bogo": True, "cross_surface": True},
+        "trust": {"did_attested": True, "issuer": "did:web:hivetrust.onrender.com"},
+        "registry": "https://hive-discovery.onrender.com",
+    }
+
+
+# ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
 
