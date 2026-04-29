@@ -7,12 +7,16 @@ import asyncio
 import time
 import uuid
 import os
-from typing import Optional, Dict, Any, List
+import json
+import collections
+from datetime import datetime, timezone
+from typing import Optional, Dict, Any, List, Tuple
 from contextlib import asynccontextmanager
 
 import httpx
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel, Field
 from dotenv import load_dotenv
 
@@ -37,6 +41,53 @@ stats = {
     "total_usdc_captured": 0.0,
     "top_bidder_did": None,
     "top_bidder_usdc": 0.0,
+}
+
+# ---------------------------------------------------------------------------
+# Leaderboard state
+# ---------------------------------------------------------------------------
+
+BRAND_GOLD = "#C08D23"
+LEADERBOARD_CACHE_TTL = 300  # 5 minutes
+
+# Per-IP rate limiting for leaderboard endpoints
+_ip_request_log: Dict[str, List[float]] = collections.defaultdict(list)
+RATE_LIMIT_WINDOW = 3600  # 1 hour
+RATE_LIMIT_MAX = 120
+
+# In-memory consume ledger: endpoint -> list of (timestamp, usdc_amount) tuples
+# Updated whenever a bid is settled against a known endpoint
+consume_ledger: Dict[str, List[Tuple[float, float]]] = collections.defaultdict(list)
+
+# Leaderboard cache
+_leaderboard_cache: Dict[str, Any] = {}
+_leaderboard_cache_ts: float = 0.0
+
+# Fleet snapshot — loaded once at startup for cold-start seeding
+_FLEET_SNAPSHOT: List[Dict[str, Any]] = []
+
+# Known Hive endpoint domains
+HIVE_DOMAINS = {
+    "hive-a2amev.onrender.com",
+    "hive-agent-sitemap.onrender.com",
+    "hive-trust-bond.onrender.com",
+    "hive-subscription.onrender.com",
+    "hive-aleo-arc.onrender.com",
+    "hive-ad-bid.onrender.com",
+    "hive-receipt.onrender.com",
+    "hive-checkout.onrender.com",
+    "hive-stable-yield-curve.onrender.com",
+    "hive-base-bridge.onrender.com",
+    "hive-x402-conformance.onrender.com",
+    "hive-attest-agentic-volume.onrender.com",
+    "hive-coinbase-mirror.onrender.com",
+    "hive-x402-index.onrender.com",
+    "hive-merchant-onboard.onrender.com",
+    "hive-stable-router.onrender.com",
+    "hive-mdk-provider.onrender.com",
+    "hive-meter.onrender.com",
+    "hivesentinel.onrender.com",
+    "hive-gamification.onrender.com",
 }
 
 # ---------------------------------------------------------------------------
@@ -116,6 +167,150 @@ def update_stats(bid_usdc: float, agent_did: str):
         stats["top_bidder_usdc"] = bid_usdc
         stats["top_bidder_did"] = agent_did
 
+
+def _endpoint_domain(url: str) -> str:
+    """Extract hostname from a URL."""
+    try:
+        from urllib.parse import urlparse
+        return urlparse(url).netloc or url
+    except Exception:
+        return url
+
+
+def _attribution(endpoint: str) -> str:
+    """Classify an endpoint as 'hive' or 'external'."""
+    for domain in HIVE_DOMAINS:
+        if domain in endpoint:
+            return "hive"
+    return "external"
+
+
+def _check_rate_limit(ip: str) -> bool:
+    """Returns True if the IP is within limits, False if rate-limited."""
+    now = time.time()
+    window_start = now - RATE_LIMIT_WINDOW
+    log = _ip_request_log[ip]
+    # Prune old entries
+    _ip_request_log[ip] = [t for t in log if t > window_start]
+    if len(_ip_request_log[ip]) >= RATE_LIMIT_MAX:
+        return False
+    _ip_request_log[ip].append(now)
+    return True
+
+
+def _load_fleet_snapshot() -> List[Dict[str, Any]]:
+    """Load fleet snapshot from disk for cold-start seeding."""
+    # Try workspace path first, then local
+    candidates = [
+        "/home/user/workspace/launch_artifacts/fleet_snapshot_20260429.json",
+        "fleet_snapshot_20260429.json",
+    ]
+    for path in candidates:
+        try:
+            with open(path, "r") as f:
+                data = json.load(f)
+            if isinstance(data, list):
+                return data
+        except Exception:
+            pass
+    return []
+
+
+def _build_leaderboard() -> Dict[str, Any]:
+    """Build the ranked leaderboard payload."""
+    global _leaderboard_cache, _leaderboard_cache_ts
+
+    now = time.time()
+    # Return cached result if still fresh
+    if _leaderboard_cache and (now - _leaderboard_cache_ts) < LEADERBOARD_CACHE_TTL:
+        return _leaderboard_cache
+
+    window_start = now - 86400  # 24h
+    updated_at = datetime.now(timezone.utc).isoformat()
+
+    # Aggregate consume data from in-memory ledger
+    endpoint_stats: Dict[str, Dict[str, Any]] = {}
+    for endpoint, entries in consume_ledger.items():
+        recent = [(ts, amt) for ts, amt in entries if ts >= window_start]
+        consumes_24h = len(recent)
+        total_usdc = sum(amt for _, amt in recent)
+        avg_price = round(total_usdc / consumes_24h, 6) if consumes_24h > 0 else 0.0
+        endpoint_stats[endpoint] = {
+            "endpoint": endpoint,
+            "consumes_24h": consumes_24h,
+            "avg_price_usdc": avg_price,
+            "attribution": _attribution(endpoint),
+        }
+
+    # Also include active task bid agents as proxy endpoints (real data)
+    for bid in task_bids.values():
+        agent = bid.get("agent_did", "")
+        if not agent:
+            continue
+        if agent not in endpoint_stats:
+            endpoint_stats[agent] = {
+                "endpoint": agent,
+                "consumes_24h": 0,
+                "avg_price_usdc": 0.0,
+                "attribution": _attribution(agent),
+            }
+
+    # Cold start: seed from fleet snapshot if no real consume data
+    total_real_consumes = sum(v["consumes_24h"] for v in endpoint_stats.values())
+    data_state = "live" if total_real_consumes > 0 else "warming"
+
+    if data_state == "warming":
+        fleet = _FLEET_SNAPSHOT or _load_fleet_snapshot()
+        for item in fleet:
+            url = item.get("url") or item.get("name") or ""
+            if not url:
+                continue
+            if url not in endpoint_stats:
+                endpoint_stats[url] = {
+                    "endpoint": url,
+                    "consumes_24h": 0,
+                    "avg_price_usdc": 0.0,
+                    "attribution": _attribution(url),
+                }
+
+    # Compute saturation score: consumes_24h * slot_weight proxy
+    # For endpoints with no MEV slot data, weight = 1.0
+    def _sat_score(ep: Dict[str, Any]) -> float:
+        c = ep["consumes_24h"]
+        price = ep["avg_price_usdc"]
+        # Saturation score = consume volume weighted by price tier
+        return round(c * max(price, 0.01), 6) if c > 0 else 0.0
+
+    ranked_list = sorted(
+        endpoint_stats.values(),
+        key=lambda x: (x["consumes_24h"], x["avg_price_usdc"]),
+        reverse=True,
+    )[:50]
+
+    ranked = [
+        {
+            "rank": i + 1,
+            "endpoint": ep["endpoint"],
+            "consumes_24h": ep["consumes_24h"],
+            "avg_price_usdc": ep["avg_price_usdc"],
+            "saturation_score": _sat_score(ep),
+            "attribution": ep["attribution"],
+        }
+        for i, ep in enumerate(ranked_list)
+    ]
+
+    payload = {
+        "window": "24h",
+        "brand_gold": BRAND_GOLD,
+        "data_state": data_state,
+        "ranked": ranked,
+        "updated_at": updated_at,
+    }
+
+    _leaderboard_cache = payload
+    _leaderboard_cache_ts = now
+    return payload
+
 # ---------------------------------------------------------------------------
 # Background expiry task
 # ---------------------------------------------------------------------------
@@ -155,6 +350,9 @@ async def register_on_pulse():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    global _FLEET_SNAPSHOT
+    _FLEET_SNAPSHOT = _load_fleet_snapshot()
+    print(f"[leaderboard] Fleet snapshot loaded: {len(_FLEET_SNAPSHOT)} entries")
     asyncio.create_task(register_on_pulse())
     asyncio.create_task(expire_bids_loop())
     yield
@@ -448,6 +646,259 @@ async def mev_settle(req: SettleRequest):
         "usdc_captured": bid["bid_usdc"],
         "agent_did": bid["agent_did"],
     }
+
+
+# ---------------------------------------------------------------------------
+# Leaderboard routes
+# ---------------------------------------------------------------------------
+
+def _leaderboard_rate_check(request: Request) -> Optional[str]:
+    """Check rate limit, return error message or None if OK."""
+    ip = request.client.host if request.client else "unknown"
+    if not _check_rate_limit(ip):
+        return "Rate limit exceeded: 120 requests/hour per IP"
+    return None
+
+
+@app.get("/leaderboard")
+async def leaderboard(request: Request):
+    """
+    GET /leaderboard
+    Returns top 50 endpoints ranked by 24h consume volume.
+    JSON response with Hive brand gold header.
+    Cached 5 minutes in memory.
+    Rate limited: 120 requests/IP/hour.
+    """
+    err = _leaderboard_rate_check(request)
+    if err:
+        return JSONResponse(status_code=429, content={"error": err})
+
+    data = _build_leaderboard()
+    return JSONResponse(
+        content=data,
+        headers={"Hive-Brand-Gold": BRAND_GOLD, "Cache-Control": "public, max-age=300"},
+    )
+
+
+@app.get("/leaderboard/snapshot.json")
+async def leaderboard_snapshot(request: Request):
+    """
+    GET /leaderboard/snapshot.json
+    Same data as /leaderboard, suitable for CDN-cached pinning.
+    """
+    err = _leaderboard_rate_check(request)
+    if err:
+        return JSONResponse(status_code=429, content={"error": err})
+
+    data = _build_leaderboard()
+    return JSONResponse(
+        content=data,
+        headers={
+            "Hive-Brand-Gold": BRAND_GOLD,
+            "Cache-Control": "public, max-age=300, s-maxage=300",
+            "Content-Disposition": "inline; filename=\"leaderboard-snapshot.json\"",
+        },
+    )
+
+
+@app.get("/leaderboard.html", response_class=HTMLResponse)
+async def leaderboard_html(request: Request):
+    """
+    GET /leaderboard.html
+    Bloomberg Terminal voice. Brand gold #C08D23 accents.
+    Renders the top-50 endpoint table with updated_at timestamp.
+    """
+    err = _leaderboard_rate_check(request)
+    if err:
+        return HTMLResponse(content=f"<h1>429 Rate Limited</h1><p>{err}</p>", status_code=429)
+
+    data = _build_leaderboard()
+    ranked = data.get("ranked", [])
+    updated_at = data.get("updated_at", "")
+    data_state = data.get("data_state", "warming")
+
+    rows = ""
+    for item in ranked:
+        attr_class = "hive" if item["attribution"] == "hive" else "ext"
+        sat = f"{item['saturation_score']:.4f}" if item["saturation_score"] else "0.0000"
+        rows += f"""
+        <tr>
+          <td class="rank">{item['rank']}</td>
+          <td class="endpoint">{item['endpoint']}</td>
+          <td class="num">{item['consumes_24h']}</td>
+          <td class="num">{item['avg_price_usdc']:.4f}</td>
+          <td class="num">{sat}</td>
+          <td class="attr {attr_class}">{item['attribution'].upper()}</td>
+        </tr>"""
+
+    state_badge = ""
+    if data_state == "warming":
+        state_badge = '<span class="warming">DATA STATE: WARMING — LIVE VOLUME PENDING</span>'
+
+    html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A2AMEV Endpoint Leaderboard</title>
+  <style>
+    :root {{
+      --gold: {BRAND_GOLD};
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --border: #222222;
+      --text: #d4d4d4;
+      --dim: #666666;
+      --hive-tag: #1a1400;
+    }}
+    * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+    body {{
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 13px;
+      line-height: 1.5;
+    }}
+    header {{
+      border-bottom: 1px solid var(--gold);
+      padding: 18px 24px 14px;
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+    }}
+    header h1 {{
+      color: var(--gold);
+      font-size: 15px;
+      letter-spacing: 0.12em;
+      font-weight: 700;
+      text-transform: uppercase;
+    }}
+    header .sub {{
+      color: var(--dim);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+    }}
+    .meta {{
+      padding: 10px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      font-size: 11px;
+      color: var(--dim);
+    }}
+    .warming {{
+      color: #b8860b;
+      background: #1a1400;
+      border: 1px solid #b8860b;
+      padding: 2px 8px;
+      letter-spacing: 0.06em;
+      font-size: 10px;
+    }}
+    .table-wrap {{
+      overflow-x: auto;
+      padding: 0 24px 24px;
+    }}
+    table {{
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 12px;
+    }}
+    thead tr {{
+      border-bottom: 1px solid var(--gold);
+    }}
+    thead th {{
+      color: var(--gold);
+      text-transform: uppercase;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      padding: 8px 12px;
+      text-align: left;
+      white-space: nowrap;
+    }}
+    thead th.num {{ text-align: right; }}
+    tbody tr {{
+      border-bottom: 1px solid var(--border);
+      transition: background 0.1s;
+    }}
+    tbody tr:hover {{ background: #161616; }}
+    td {{
+      padding: 7px 12px;
+      vertical-align: middle;
+    }}
+    td.rank {{
+      color: var(--gold);
+      font-weight: 700;
+      width: 40px;
+    }}
+    td.endpoint {{
+      font-size: 12px;
+      word-break: break-all;
+    }}
+    td.num {{ text-align: right; font-variant-numeric: tabular-nums; }}
+    td.attr {{
+      text-align: center;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      border-radius: 2px;
+      padding: 3px 8px;
+    }}
+    td.attr.hive {{
+      color: var(--gold);
+      background: var(--hive-tag);
+    }}
+    td.attr.ext {{
+      color: var(--dim);
+    }}
+    footer {{
+      border-top: 1px solid var(--border);
+      padding: 12px 24px;
+      font-size: 10px;
+      color: var(--dim);
+      display: flex;
+      justify-content: space-between;
+    }}
+    footer a {{ color: var(--gold); text-decoration: none; }}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>A2AMEV &mdash; Endpoint Leaderboard</h1>
+    <span class="sub">AGENTIC NETWORK / 24H CONSUME VOLUME</span>
+  </header>
+  <div class="meta">
+    <span>WINDOW: 24H</span>
+    <span>UPDATED: {updated_at}</span>
+    <span>TOP 50 ENDPOINTS</span>
+    {state_badge}
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>RANK</th>
+          <th>ENDPOINT</th>
+          <th class="num">CONSUMES 24H</th>
+          <th class="num">AVG PRICE USDC</th>
+          <th class="num">SATURATION SCORE</th>
+          <th>TYPE</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows}
+      </tbody>
+    </table>
+  </div>
+  <footer>
+    <span>HIVE A2AMEV &mdash; MEV FOR AUTONOMOUS AGENT NETWORKS</span>
+    <span><a href="/leaderboard/snapshot.json">snapshot.json</a> &nbsp;|&nbsp; <a href="/leaderboard">JSON</a></span>
+  </footer>
+</body>
+</html>"""
+    return HTMLResponse(
+        content=html,
+        headers={"Hive-Brand-Gold": BRAND_GOLD, "Cache-Control": "public, max-age=300"},
+    )
 
 
 # ---------------------------------------------------------------------------
